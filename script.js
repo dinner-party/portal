@@ -122,6 +122,32 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         settingsBtn.classList.toggle('visible');
     }
+
+// Long press detection for mobile (hold for 3 seconds)
+let longPressTimer = null;
+
+document.addEventListener('touchstart', (e) => {
+    // Don't trigger if settings modal is open or touching an input
+    if (settingsModal.classList.contains('open') || 
+        e.target.tagName === 'INPUT' || 
+        e.target.tagName === 'TEXTAREA' ||
+        e.target.tagName === 'BUTTON' ||
+        e.target.tagName === 'SELECT') {
+        return;
+    }
+    
+    longPressTimer = setTimeout(() => {
+        settingsBtn.classList.toggle('visible');
+    }, 3000);
+});
+
+document.addEventListener('touchend', () => {
+    clearTimeout(longPressTimer);
+});
+
+document.addEventListener('touchmove', () => {
+    clearTimeout(longPressTimer);
+});
     
     // Close settings on Escape
     if (e.key === 'Escape' && settingsModal.classList.contains('open')) {
