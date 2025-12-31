@@ -289,7 +289,7 @@ body {
 .riddle-container {
     opacity: 0;
     max-width: 800px;
-    width: 90%;
+    width: 150%;
     padding: 2rem;
     transition: opacity 0.5s ease;
     visibility: hidden;
