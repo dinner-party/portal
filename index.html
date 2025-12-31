@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="mystery">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Myrna's Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="flash-overlay" id="flashOverlay"></div>
+    
+    <!-- Settings Button -->
+    <button class="settings-btn" id="settingsBtn" title="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </button>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2>SETTINGS</h2>
+                <button class="settings-close" id="settingsClose">&times;</button>
+            </div>
+            
+            <div class="settings-body">
+                <div class="settings-group">
+                    <label for="settingsTheme">Theme</label>
+                    <select id="settingsTheme">
+                        <option value="mystery">Murder Mystery</option>
+                        <option value="green">Green Terminal</option>
+                        <option value="gothic">Gothic</option>
+                    </select>
+                </div>
+
+                <div class="settings-group">
+                    <label for="settingsCode">Access Code (4 digits)</label>
+                    <input type="text" id="settingsCode" maxlength="4" pattern="[0-9]{4}" placeholder="9473">
+                </div>
+
+                <div class="settings-group">
+                    <label for="settingsPrompt">Header Text</label>
+                    <input type="text" id="settingsPrompt" placeholder="ENTER ACCESS CODE">
+                </div>
+
+                <div class="settings-group">
+                    <label for="settingsRiddle">Riddle / Clue</label>
+                    <textarea id="settingsRiddle" rows="4" placeholder="Enter the riddle or clue to reveal"></textarea>
+                </div>
+
+                <div class="settings-group">
+                    <label for="settingsTypeSpeed">Typing Speed</label>
+                    <select id="settingsTypeSpeed">
+                        <option value="10">Fast</option>
+                        <option value="30">Normal</option>
+                        <option value="60">Slow</option>
+                        <option value="100">Dramatic</option>
+                    </select>
+                </div>
+
+                <div class="settings-group">
+                    <label for="settingsAlignment">Riddle Alignment</label>
+                    <select id="settingsAlignment">
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="settings-save" id="settingsSave">SAVE</button>
+                    <button class="settings-reset" id="settingsReset">RESET</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="code-entry" id="codeEntry">
+            <div class="prompt-text">ENTER ACCESS CODE</div>
+            <div class="code-boxes">
+                <input type="number" class="code-box" id="box1" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="number" class="code-box" id="box2" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="number" class="code-box" id="box3" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="number" class="code-box" id="box4" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+            </div>
+            <button class="submit-btn" id="submitBtn">SUBMIT</button>
+        </div>
+
+        <div class="riddle-container" id="riddleContainer">
+            <div class="riddle-text">
+                <span id="riddleText"></span>
+				<span class="cursor" id="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

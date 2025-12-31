@@ -1,0 +1,890 @@
+/* ========================================
+   THEME DEFINITIONS
+   ======================================== */
+
+/* Typewriter font for mystery theme */
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+/* Green Terminal */
+[data-theme="green"], :root {
+    --terminal-primary: #33ff33;
+    --terminal-primary-dim: #20cc20;
+    --terminal-primary-glow: rgba(51, 255, 51, 0.6);
+    --terminal-bg: #0a0a0a;
+    --terminal-bg-light: #111111;
+    --error-color: #ff3333;
+    --error-glow: rgba(255, 51, 51, 0.4);
+    --flicker-color: rgba(51, 255, 51, 0.03);
+}
+
+/* Murder Mystery */
+[data-theme="mystery"] {
+    --terminal-primary: #2c2416;
+    --terminal-primary-dim: #4a3c2a;
+    --terminal-primary-glow: rgba(44, 36, 22, 0.3);
+    --terminal-bg: #f4e9d5;
+    --terminal-bg-light: #ebe0cc;
+    --error-color: #8b0000;
+    --error-glow: rgba(139, 0, 0, 0.4);
+    --flicker-color: transparent;
+}
+
+/* Gothic Mystery */
+[data-theme="gothic"] {
+    --terminal-primary: #c9b896;
+    --terminal-primary-dim: #8a7a5e;
+    --terminal-primary-glow: rgba(201, 184, 150, 0.3);
+    --terminal-bg: #0d0d0d;
+    --terminal-bg-light: #1a1a1a;
+    --error-color: #8b0000;
+    --error-glow: rgba(139, 0, 0, 0.5);
+    --flicker-color: transparent;
+}
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'VT323', monospace;
+    background-color: var(--terminal-bg);
+    color: var(--terminal-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* ========================================
+   CRT SCREEN EFFECTS
+   ======================================== */
+
+/* Scanlines */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15) 0px,
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Screen flicker */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--flicker-color);
+    pointer-events: none;
+    z-index: 999;
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.27; }
+    10% { opacity: 0.25; }
+    20% { opacity: 0.28; }
+    30% { opacity: 0.25; }
+    40% { opacity: 0.26; }
+    50% { opacity: 0.27; }
+    60% { opacity: 0.25; }
+    70% { opacity: 0.28; }
+    80% { opacity: 0.26; }
+    90% { opacity: 0.24; }
+    100% { opacity: 0.27; }
+}
+
+/* Vignette effect */
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 997;
+}
+
+/* Red flash overlay for errors */
+.flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--error-color);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 998;
+    transition: opacity 0.1s ease;
+}
+
+.flash-overlay.active {
+    animation: redFlash 0.3s ease;
+}
+
+@keyframes redFlash {
+    0% { opacity: 0; }
+    20% { opacity: 0.25; }
+    100% { opacity: 0; }
+}
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+
+.terminal-container {
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ========================================
+   CODE ENTRY SECTION
+   ======================================== */
+
+.code-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    transition: opacity 0.5s ease;
+}
+
+.code-entry.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.prompt-text {
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px var(--terminal-primary-glow);
+    letter-spacing: 2px;
+}
+
+.code-boxes {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.code-box {
+    width: 60px;
+    height: 75px;
+    background-color: var(--terminal-bg);
+    border: 2px solid var(--terminal-primary-dim);
+    color: var(--terminal-primary);
+    font-family: 'VT323', monospace;
+    font-size: 3rem;
+    text-align: center;
+    caret-color: var(--terminal-primary);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    text-shadow: 0 0 8px var(--terminal-primary-glow);
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: none;
+}
+
+/* Hide number input spinners */
+.code-box::-webkit-outer-spin-button,
+.code-box::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.code-box:focus {
+    border-color: var(--terminal-primary);
+    box-shadow: 
+        0 0 15px var(--terminal-primary-glow),
+        inset 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.code-box.error {
+    border-color: var(--error-color);
+    box-shadow: 0 0 15px var(--error-glow);
+}
+
+/* ========================================
+   SUBMIT BUTTON
+   ======================================== */
+
+.submit-btn {
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+    padding: 0.75rem 2.5rem;
+    background-color: transparent;
+    border: 2px solid var(--terminal-primary-dim);
+    color: var(--terminal-primary);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.2s ease;
+    text-shadow: 0 0 8px var(--terminal-primary-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.3s ease;
+}
+
+.submit-btn:hover {
+    border-color: var(--terminal-primary);
+    box-shadow: 
+        0 0 20px var(--terminal-primary-glow),
+        inset 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.submit-btn:hover::before {
+    left: 100%;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* ========================================
+   RIDDLE SECTION
+   ======================================== */
+
+.riddle-container {
+    opacity: 0;
+    max-width: 800px;
+    width: 90%;
+    padding: 2rem;
+    transition: opacity 0.5s ease;
+    visibility: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.riddle-container.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.riddle-text {
+    font-size: 1.75rem;
+    line-height: 1.6;
+    text-shadow: 0 0 10px var(--terminal-primary-glow);
+    letter-spacing: 1px;
+    text-align: left;
+}
+
+.cursor {
+    display: inline-block;
+    width: 12px;
+    height: 1.5rem;
+    background-color: var(--terminal-primary);
+    margin-left: 2px;
+    animation: blink 0.8s step-end infinite;
+    vertical-align: middle;
+    box-shadow: 0 0 8px var(--terminal-primary-glow);
+}
+
+.cursor.hidden {
+    display: none;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ========================================
+   THEME BACKGROUND IMAGES
+   ======================================== */
+
+/* Theme default backgrounds from images folder */
+[data-theme="green"] body {
+    background-image: url('images/green.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: var(--terminal-bg);
+}
+
+[data-theme="mystery"] body {
+    background-image: url('images/mystery.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: var(--terminal-bg);
+}
+
+[data-theme="gothic"] body {
+    background-image: url('images/gothic.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: var(--terminal-bg);
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 480px) {
+    .prompt-text {
+        font-size: 1.25rem;
+    }
+
+    .code-box {
+        width: 50px;
+        height: 65px;
+        font-size: 2.5rem;
+    }
+
+    .code-boxes {
+        gap: 0.5rem;
+    }
+
+    .submit-btn {
+        font-size: 1.25rem;
+        padding: 0.6rem 2rem;
+    }
+
+    .riddle-text {
+        font-size: 1.4rem;
+    }
+
+    .settings-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+/* ========================================
+   SETTINGS BUTTON & MODAL
+   ======================================== */
+
+.settings-btn {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1002;
+    background: transparent;
+    border: none;
+    color: var(--terminal-primary-dim);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.settings-btn.visible {
+    opacity: 0.6;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.settings-btn:hover {
+    color: var(--terminal-primary);
+    opacity: 1;
+    transform: rotate(45deg);
+}
+
+.settings-btn svg {
+    display: block;
+}
+
+/* Settings Modal Overlay */
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.settings-modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Settings Panel */
+.settings-panel {
+    background-color: var(--terminal-bg);
+    border: 2px solid var(--terminal-primary-dim);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px var(--terminal-primary-glow);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.settings-modal.open .settings-panel {
+    transform: scale(1);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--terminal-primary-dim);
+}
+
+.settings-header h2 {
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: var(--terminal-primary);
+    text-shadow: 0 0 10px var(--terminal-primary-glow);
+    margin: 0;
+}
+
+.settings-close {
+    background: transparent;
+    border: none;
+    color: var(--terminal-primary-dim);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s ease;
+}
+
+.settings-close:hover {
+    color: var(--terminal-primary);
+}
+
+.settings-body {
+    padding: 1.5rem;
+}
+
+.settings-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-group label {
+    display: block;
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: var(--terminal-primary);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 5px var(--terminal-primary-glow);
+}
+
+.settings-group input,
+.settings-group select,
+.settings-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    background-color: var(--terminal-bg-light);
+    border: 1px solid var(--terminal-primary-dim);
+    color: var(--terminal-primary);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-group input:focus,
+.settings-group select:focus,
+.settings-group textarea:focus {
+    border-color: var(--terminal-primary);
+    box-shadow: 0 0 10px var(--terminal-primary-glow);
+}
+
+.settings-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2333ff33' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+.settings-group select option {
+    background-color: var(--terminal-bg);
+    color: var(--terminal-primary);
+}
+
+.settings-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.settings-group input::placeholder,
+.settings-group textarea::placeholder {
+    color: var(--terminal-primary-dim);
+    opacity: 0.5;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.settings-save,
+.settings-reset {
+    flex: 1;
+    font-family: 'VT323', monospace;
+    font-size: 1.25rem;
+    padding: 0.75rem 1.5rem;
+    background-color: transparent;
+    border: 2px solid var(--terminal-primary-dim);
+    color: var(--terminal-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-shadow: 0 0 5px var(--terminal-primary-glow);
+}
+
+.settings-save:hover,
+.settings-reset:hover {
+    border-color: var(--terminal-primary);
+    box-shadow: 0 0 15px var(--terminal-primary-glow);
+}
+
+.settings-reset {
+    border-color: var(--error-color);
+    color: var(--error-color);
+    text-shadow: 0 0 5px var(--error-glow);
+}
+
+.settings-reset:hover {
+    border-color: var(--error-color);
+    box-shadow: 0 0 15px var(--error-glow);
+}
+
+@media (max-width: 480px) {
+    .settings-btn {
+        top: 0.5rem;
+        left: 0.5rem;
+    }
+
+    .settings-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .settings-body {
+        padding: 1rem;
+    }
+
+    .settings-actions {
+        flex-direction: column;
+    }
+}
+
+/* ========================================
+   MURDER MYSTERY THEME OVERRIDES
+   ======================================== */
+
+[data-theme="mystery"] body {
+    font-family: 'Special Elite', monospace;
+    background: 
+        /* Paper texture noise */
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+        /* Aged paper gradient */
+        radial-gradient(ellipse at center, #f4e9d5 0%, #e8dcc4 50%, #d4c4a8 100%);
+    background-color: #f4e9d5;
+}
+
+/* Disable CRT scanlines for mystery theme */
+[data-theme="mystery"] body::before {
+    background: none;
+}
+
+/* Disable flicker for mystery theme */
+[data-theme="mystery"] body::after {
+    display: none;
+}
+
+/* Paper edge vignette instead of CRT vignette */
+[data-theme="mystery"] .vignette {
+    box-shadow: 
+        inset 0 0 100px rgba(139, 119, 84, 0.4),
+        inset 0 0 200px rgba(139, 119, 84, 0.2);
+}
+
+/* Coffee stain decorative element */
+[data-theme="mystery"] .terminal-container::before {
+    content: "";
+    position: fixed;
+    bottom: 10%;
+    left: 8%;
+    width: 120px;
+    height: 100px;
+    background: radial-gradient(ellipse at center, 
+        transparent 30%,
+        rgba(101, 67, 33, 0.08) 50%,
+        rgba(101, 67, 33, 0.15) 60%,
+        rgba(101, 67, 33, 0.08) 70%,
+        transparent 80%
+    );
+    border-radius: 50%;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+/* Typewriter-style text */
+[data-theme="mystery"] .prompt-text {
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    letter-spacing: 1px;
+}
+
+/* Typewriter input boxes */
+[data-theme="mystery"] .code-box {
+    font-family: 'Special Elite', monospace;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--terminal-primary);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    font-size: 2.5rem;
+}
+
+[data-theme="mystery"] .code-box:focus {
+    box-shadow: none;
+    border-bottom-color: var(--terminal-primary);
+    background-color: rgba(44, 36, 22, 0.05);
+}
+
+[data-theme="mystery"] .code-box.error {
+    border-bottom-color: var(--error-color);
+    box-shadow: none;
+}
+
+/* Typewriter button */
+[data-theme="mystery"] .submit-btn {
+    font-family: 'Special Elite', monospace;
+    border: 2px solid var(--terminal-primary);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    letter-spacing: 2px;
+}
+
+[data-theme="mystery"] .submit-btn::before {
+    display: none;
+}
+
+[data-theme="mystery"] .submit-btn:hover {
+    background-color: rgba(44, 36, 22, 0.1);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Typewriter riddle text */
+[data-theme="mystery"] .riddle-text {
+    font-family: 'Special Elite', monospace;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+}
+
+/* Typewriter cursor */
+[data-theme="mystery"] .cursor {
+    background-color: var(--terminal-primary);
+    box-shadow: none;
+    width: 10px;
+    height: 1.3rem;
+}
+
+/* Dark red flash for mystery theme */
+[data-theme="mystery"] .flash-overlay {
+    background-color: var(--error-color);
+}
+
+@media (max-width: 480px) {
+    [data-theme="mystery"] .code-box {
+        font-size: 2rem;
+    }
+    
+    [data-theme="mystery"] .terminal-container::before {
+        width: 80px;
+        height: 70px;
+        bottom: 5%;
+        left: 5%;
+    }
+}
+
+/* Mystery theme settings overrides */
+[data-theme="mystery"] .settings-header h2,
+[data-theme="mystery"] .settings-group label,
+[data-theme="mystery"] .settings-group input,
+[data-theme="mystery"] .settings-group select,
+[data-theme="mystery"] .settings-group textarea,
+[data-theme="mystery"] .settings-save,
+[data-theme="mystery"] .settings-reset {
+    font-family: 'Special Elite', monospace;
+}
+
+[data-theme="mystery"] .settings-panel {
+    background: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+        linear-gradient(to bottom, #f4e9d5 0%, #e8dcc4 100%);
+    box-shadow: 0 0 30px rgba(44, 36, 22, 0.5);
+}
+
+[data-theme="mystery"] .settings-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c2416' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+/* ========================================
+   GOTHIC MYSTERY THEME OVERRIDES
+   ======================================== */
+
+/* Import gothic font */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital@0;1&display=swap');
+
+[data-theme="gothic"] body {
+    font-family: 'Crimson Text', serif;
+}
+
+/* Disable CRT scanlines for gothic theme */
+[data-theme="gothic"] body::before {
+    background: none;
+}
+
+/* Disable flicker for gothic theme */
+[data-theme="gothic"] body::after {
+    display: none;
+}
+
+/* Dark vignette */
+[data-theme="gothic"] .vignette {
+    box-shadow: 
+        inset 0 0 200px rgba(0, 0, 0, 0.9),
+        inset 0 0 100px rgba(0, 0, 0, 0.7);
+}
+
+/* Gothic-style text */
+[data-theme="gothic"] .prompt-text {
+    font-family: 'Cinzel Decorative', serif;
+    text-shadow: 0 0 10px var(--terminal-primary-glow);
+    letter-spacing: 3px;
+    font-size: 1.3rem;
+}
+
+/* Gothic input boxes */
+[data-theme="gothic"] .code-box {
+    font-family: 'Cinzel Decorative', serif;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--terminal-primary-dim);
+    text-shadow: 0 0 8px var(--terminal-primary-glow);
+}
+
+[data-theme="gothic"] .code-box:focus {
+    border-color: var(--terminal-primary);
+    box-shadow: 
+        0 0 15px var(--terminal-primary-glow),
+        inset 0 0 10px rgba(201, 184, 150, 0.1);
+}
+
+/* Gothic button */
+[data-theme="gothic"] .submit-btn {
+    font-family: 'Cinzel Decorative', serif;
+    border: 1px solid var(--terminal-primary-dim);
+    text-shadow: 0 0 8px var(--terminal-primary-glow);
+    letter-spacing: 3px;
+}
+
+[data-theme="gothic"] .submit-btn:hover {
+    background-color: rgba(201, 184, 150, 0.1);
+    border-color: var(--terminal-primary);
+    box-shadow: 0 0 20px var(--terminal-primary-glow);
+}
+
+/* Gothic riddle text */
+[data-theme="gothic"] .riddle-text {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    text-shadow: 0 0 10px var(--terminal-primary-glow);
+    line-height: 1.8;
+}
+
+/* Gothic cursor */
+[data-theme="gothic"] .cursor {
+    background-color: var(--terminal-primary);
+    box-shadow: 0 0 8px var(--terminal-primary-glow);
+}
+
+/* Gothic settings overrides */
+[data-theme="gothic"] .settings-header h2 {
+    font-family: 'Cinzel Decorative', serif;
+}
+
+[data-theme="gothic"] .settings-group label,
+[data-theme="gothic"] .settings-group input,
+[data-theme="gothic"] .settings-group select,
+[data-theme="gothic"] .settings-group textarea,
+[data-theme="gothic"] .settings-save,
+[data-theme="gothic"] .settings-reset {
+    font-family: 'Crimson Text', serif;
+}
+
+[data-theme="gothic"] .settings-panel {
+    background: 
+        linear-gradient(to bottom, #1a1a1a 0%, #0d0d0d 100%);
+    border-color: var(--terminal-primary-dim);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="gothic"] .settings-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9b896' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 480px) {
+    [data-theme="gothic"] .prompt-text {
+        font-size: 1.1rem;
+    }
+    
+    [data-theme="gothic"] .riddle-text {
+        font-size: 1.3rem;
+    }
+}
