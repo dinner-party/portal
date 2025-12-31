@@ -70,8 +70,8 @@ body {
    CRT SCREEN EFFECTS
    ======================================== */
 
-/* Scanlines */
-body::before {
+/* Scanlines - only for green terminal theme */
+[data-theme="green"] body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -81,17 +81,17 @@ body::before {
     background: 
         repeating-linear-gradient(
             0deg,
-            rgba(0, 0, 0, 0.15) 0px,
-            rgba(0, 0, 0, 0.15) 1px,
+            rgba(0, 0, 0, 0.3) 0px,
+            rgba(0, 0, 0, 0.3) 1px,
             transparent 1px,
-            transparent 2px
+            transparent 3px
         );
     pointer-events: none;
     z-index: 1000;
 }
 
-/* Screen flicker */
-body::after {
+/* Screen flicker - only for green terminal theme */
+[data-theme="green"] body::after {
     content: "";
     position: fixed;
     top: 0;
@@ -638,41 +638,11 @@ body::after {
     background-color: #f4e9d5;
 }
 
-/* Disable CRT scanlines for mystery theme */
-[data-theme="mystery"] body::before {
-    background: none;
-}
-
-/* Disable flicker for mystery theme */
-[data-theme="mystery"] body::after {
-    display: none;
-}
-
 /* Paper edge vignette instead of CRT vignette */
 [data-theme="mystery"] .vignette {
     box-shadow: 
         inset 0 0 100px rgba(139, 119, 84, 0.4),
         inset 0 0 200px rgba(139, 119, 84, 0.2);
-}
-
-/* Coffee stain decorative element */
-[data-theme="mystery"] .terminal-container::before {
-    content: "";
-    position: fixed;
-    bottom: 10%;
-    left: 8%;
-    width: 120px;
-    height: 100px;
-    background: radial-gradient(ellipse at center, 
-        transparent 30%,
-        rgba(101, 67, 33, 0.08) 50%,
-        rgba(101, 67, 33, 0.15) 60%,
-        rgba(101, 67, 33, 0.08) 70%,
-        transparent 80%
-    );
-    border-radius: 50%;
-    transform: rotate(-15deg);
-    pointer-events: none;
 }
 
 /* Typewriter-style text */
@@ -783,16 +753,6 @@ body::after {
 
 [data-theme="gothic"] body {
     font-family: 'Crimson Text', serif;
-}
-
-/* Disable CRT scanlines for gothic theme */
-[data-theme="gothic"] body::before {
-    background: none;
-}
-
-/* Disable flicker for gothic theme */
-[data-theme="gothic"] body::after {
-    display: none;
 }
 
 /* Dark vignette */
