@@ -108,7 +108,7 @@ function applyTheme(theme) {
 window.addEventListener('load', init);
 
 // ========================================
-// SETTINGS BUTTON REVEAL (Ctrl+,)
+// SETTINGS BUTTON REVEAL (Ctrl+, or long press on mobile)
 // ========================================
 
 document.addEventListener('keydown', (e) => {
@@ -117,22 +117,26 @@ document.addEventListener('keydown', (e) => {
         return;
     }
     
-    // Ctrl+, to toggle settings button
+    // Ctrl+, (Windows/Linux) or Cmd+, (Mac) to toggle settings button
     if ((e.ctrlKey || e.metaKey) && e.key === ',') {
         e.preventDefault();
         settingsBtn.classList.toggle('visible');
     }
+});
 
+// 4 quick taps/clicks detection (works on mobile and desktop)
 let tapCount = 0;
 let tapTimer = null;
 
-document.addEventListener('touchend', (e) => {
-    // Don't trigger if settings modal is open or touching an input
+document.addEventListener('click', (e) => {
+    // Don't trigger if settings modal is open or clicking an input
     if (settingsModal.classList.contains('open') || 
         e.target.tagName === 'INPUT' || 
         e.target.tagName === 'TEXTAREA' ||
         e.target.tagName === 'BUTTON' ||
-        e.target.tagName === 'SELECT') {
+        e.target.tagName === 'SELECT' ||
+        e.target.closest('.settings-btn') ||
+        e.target.closest('.settings-modal')) {
         return;
     }
     
@@ -141,7 +145,7 @@ document.addEventListener('touchend', (e) => {
     clearTimeout(tapTimer);
     tapTimer = setTimeout(() => {
         tapCount = 0;
-    }, 800);
+    }, 1000);
     
     if (tapCount >= 4) {
         settingsBtn.classList.toggle('visible');
@@ -149,11 +153,8 @@ document.addEventListener('touchend', (e) => {
     }
 });
     
-    // Close settings on Escape
-    if (e.key === 'Escape' && settingsModal.classList.contains('open')) {
-        closeSettings();
-    }
-});
+    
+
 
 // ========================================
 // SETTINGS MODAL
