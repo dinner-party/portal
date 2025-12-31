@@ -123,10 +123,10 @@ document.addEventListener('keydown', (e) => {
         settingsBtn.classList.toggle('visible');
     }
 
-// Long press detection for mobile (hold for 3 seconds)
-let longPressTimer = null;
+let tapCount = 0;
+let tapTimer = null;
 
-document.addEventListener('touchstart', (e) => {
+document.addEventListener('touchend', (e) => {
     // Don't trigger if settings modal is open or touching an input
     if (settingsModal.classList.contains('open') || 
         e.target.tagName === 'INPUT' || 
@@ -136,17 +136,17 @@ document.addEventListener('touchstart', (e) => {
         return;
     }
     
-    longPressTimer = setTimeout(() => {
+    tapCount++;
+    
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => {
+        tapCount = 0;
+    }, 800);
+    
+    if (tapCount >= 4) {
         settingsBtn.classList.toggle('visible');
-    }, 3000);
-});
-
-document.addEventListener('touchend', () => {
-    clearTimeout(longPressTimer);
-});
-
-document.addEventListener('touchmove', () => {
-    clearTimeout(longPressTimer);
+        tapCount = 0;
+    }
 });
     
     // Close settings on Escape
